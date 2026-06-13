@@ -119,6 +119,10 @@ Naming convention `(dim/fact/agg)_(model name)`.
 
 There is also an official metrics layer (e.g. Snowflake Semantic View, dbt Semantic Layer, Metric in Metabase). 
 
+SQL Style guide written and shared with all dbt developers. I usually base mine off this Gitlab one.  SQL linting package added to the project to enforce most of them (trailing vs leading commas, spacing,indentetion, capitalisation etc etc). 
+
+dbt workflow guide written and shared with all dbt developers. dbt pre-commit hooks implemented to enforce things like no hardcoded table paths, tests added to every model, columns documented etc 
+
 
 Ownership:
 Central
