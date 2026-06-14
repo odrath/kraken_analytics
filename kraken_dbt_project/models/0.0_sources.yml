@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: kraken_logbook_raw
+    description: "Ingestion from the fleet's logbook systems and the ship registry."
+    schema: raw
+    tables:
+      - name: raids
+        description: "All raid attemps, regardless of status and outcome."
+        columns:
+          - name: raid_id
+            description: "Primary key for this table"
+            data_tests:
+               - unique      
+               - not_null
+          - name: status
+            description: "Final status of the raid"
+            data_tests:
+              - accepted_values:
+                  arguments: 
+                    values: ['plundered', 'abandoned', 'repelled']
+          - name: captain_id
+          - name: rival_captain_id
+          - name: raid_ship_id
+          - name: started_at_utc
+          - name: is_sanctioned
+          - name: victor_captain_id
+
+
+

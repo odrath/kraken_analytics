@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: fact_raids
+    description: "One row per raid"
+    columns:
+      - name: raid_id
+        tests:
+          - unique
+          - not_null
+
+
+
+semantic_models:
+  - name: raids
+    defaults:
+      agg_time_dimension: started_at_ame_jam
+    description: |
+      Raids fact table. This table is at the raid grain with one row per raid.
+    model: ref('fact_raids')
+    entities:
+      - name: raid_id
+        type: primary
+      - name: captain
+        type: foreign
+        expr: captain_id
+    dimensions:
+      - name: started_at_ame_jam
+        expr: started_at_ame_jam
+        type: time
+        type_params:
+          time_granularity: day
+      - name: raid_status
+        type: categorical
+      - name: is_sanctioned
+        type: categorical
+    measures:
+      - name: raids_count
+        expr: 1
+        agg: sum
+metrics:
+  - name: raids
+    description: Count of raids.
+    label: Raids
+    type: simple
+    type_params:
+      measure: raids_count
+  - name: sanctioned_raids
+    description: Count of raids that were sanctioned
+    label: Santioned Raids
+    type: simple
+    type_params:
+      measure: raids_count
+    filter: |
+      {{ Dimension('raid_id__is_sanctioned') }} = true

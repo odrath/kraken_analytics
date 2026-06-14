@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: int_fact_raids
+    description: "One row per raid"
+    columns:
+      - name: raid_id
+        tests:
+          - unique
+          - not_null

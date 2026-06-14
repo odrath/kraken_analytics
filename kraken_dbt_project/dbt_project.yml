@@ -1,0 +1,31 @@
+name: 'kraken_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'kraken_analytics'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Schemas are named by folder. See macros/generate_schema_name.sql, which a
+# previous engineer overrode so custom schema names are used verbatim (no env prefix).
+models:
+  kraken_analytics:
+    1.0_staging:
+      +materialized: view
+      +schema: staging
+    2.0_intermediate:
+      +materialized: table
+      +schema: intermediate
+    3.0_bi:
+      +materialized: table
+      +schema: bi
+
