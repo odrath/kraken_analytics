@@ -5,7 +5,7 @@
 
 
 ## Executive summary
-> TThe current state of kraken analytics is a combination of organisational issues and analytics engineering/best-practice issues. When planning the migration, the priority should be on restoring main reporting for the business, while not compromising on the reliability of the data. 
+> The current state of kraken analytics is a combination of organisational issues and analytics engineering/best-practice issues. When planning the migration, the priority should be on restoring main reporting for the business, while not compromising on the reliability of the data. 
 > Therefore, in the first steps, we will start with a thin slice of a clean dbt project that will feed a few main business metrics that the War Council is currently relying on (MVP). We will build them using the new modelling architecture, which follows best practice and ensures data reliability. Once the MVP stage is completed, we will briefly focus on establishing future-proof analytics engineering workflows. After that, we will continue building further models, based on the business prioritisation.
 > 
 >
@@ -22,7 +22,7 @@ The proposed order of problems to address is:
 
   * Two revenue models with different logic: `fct_plunder_sales` and `fct_plunder_sales_old.sql`. The best course of action would be to confirm with finance which model whether the old model is still needed. If it's not, deprecate and delete it. If it's needed for historical audit purposes - rename, clearly document and move to a finance data mart.
 
-  *`captain_360` and `dim_captain` are near-duplicates with different lineage and should be consolidated. Growth team should not be creating any additional sources of truth but build on top of the core data assets in the the gold layer.
+  * `captain_360` and `dim_captain` are near-duplicates with different lineage and should be consolidated. Growth team should not be creating any additional sources of truth but build on top of the core data assets in the the gold layer.
 
 
 2. _Priority: High_ **Uniquness test on the main source table is failing, leading to potential reporting inconsitencies and compromising the reliability/trust.** 
@@ -40,7 +40,6 @@ Column `parley_address` should be immediately removed from all layers, from stag
 
 
 6.  _Priority: Medium-High_ **A manual SQL script outside of dbt's DAG.**
-
 View `manual.ship_overrides` is created by running a raw SQL file manually. The values are hand-keyed integers with comments. This means:
 - There are no dbt tests on this data.
 - Changes are not captured in version control via dbt.
@@ -55,15 +54,12 @@ View `manual.ship_overrides` is created by running a raw SQL file manually. The 
   Raw data is kept in UTC but the reporting is expected to be in Port Royale (`America/Jamaica`, UTC-5) time. Models in the repository contain a mix of timestamp/date fields in both timezones, but it's not clearly stated in the column names. There should be a rule where non-UTC timestamps should have a relevant suffix, e.g. `raided_at_ame_jam`.
 
 9. _Priority: Medium_ **Staging layer is doing too much (and inconsistently).**
-
 `stg_raids` joins to `stg_captains`, deduplicates, derives business flags, and converts timezones — all in a staging model. The other staging models (`stg_captains`, `stg_ships`, `stg_plunder_sales`) are simple pass-throughs. Staging should be a uniform, light cleaning layer: rename columns, cast types, apply source filters, (maybe) deduplicate. Business logic belongs in later layers. 
 
 10.  _Priority: Medium_ **Models from layers 'above' the staging read directly from raw sources.**
-
 Examples: `int_raids_enriched`, `analytics.raids_fact`, `fct_plunder_sales_old.sql`
 
 11. _Priority: Medium_ **`fct_raids` overrides its own materialisation**
-
 `dbt_project.yml` sets `gold: +materialized: table`. `fct_raids.sql` overrides this with `{{ config(materialized='view') }}`. This is the "source of truth for raids" and the model that powers downstream marts — it should probably be a table for query performance and reliability, not a view. If there is a reason for this to be a view - it needs documenting.
 
 
@@ -86,13 +82,8 @@ There should be a system of what different tags represent:
 18. _Priority: Low_ **No defined exposures.**
 
 19. _Priority: Low_ **Inconsistent columns naming.**
-
 `raids_fact`. Renames `captain_id` to `buccaneer_id` with no documentation. If we consider 'analytics' folder to be responsibility of the growth team, in the 'data mesh' spirit, we can deam this as a lesser priority to fix ourselves, however, the official business lexicon & naming conventions should be shared with the business and everyone is _expected_ to follow.
 
-
-
- 
-   
 
 ## Target-state design.
 
@@ -113,7 +104,7 @@ Naming convention `(dim/fact/agg)_(model name)`.
 
 There is also an official metrics layer (e.g. Snowflake Semantic View, dbt Semantic Layer, Metric in Metabase). 
 
-SQL Style guide written and shared with all dbt developers. I usually base mine off [this Gitlab one] (https://handbook.gitlab.com/handbook/enterprise-data/platform/sql-style-guide/).  SQL linting package added to the project to enforce most of them (trailing vs leading commas, spacing,indentetion, capitalisation etc etc). 
+SQL Style guide written and shared with all dbt developers. I usually base mine off [this Gitlab one](https://handbook.gitlab.com/handbook/enterprise-data/platform/sql-style-guide/).  SQL linting package added to the project to enforce most of them (trailing vs leading commas, spacing,indentetion, capitalisation etc etc). 
 
 dbt workflow guide written and shared with all dbt developers. dbt pre-commit hooks implemented to enforce things like no hardcoded table paths, tests added to every model, columns documented etc 
 
