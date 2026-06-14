@@ -137,3 +137,4 @@ Schema and metrics in the data mart layer, belong to business-embedded analysts 
 * Are there created_at and updated_at fields in raw tables?Are there any sources worth snapshotting?
 * Are there any models worth being incremental?
 * Do we need any rolling windows models to mitigate seasonality?  Metabase's GUI currently cannot calculate window functions outside of a cumulative sum/count.
+* Are there other data sources worth bringing in?
