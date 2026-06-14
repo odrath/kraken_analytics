@@ -4,7 +4,7 @@
 
 * `dbt_modelling_layers_dependecy.png` - diagram of dbt modelling leayers
 
-* `kraken_dbt_project` - a starter dbt project with a worked example of a thin slice (raids count metric). It assumes duplication problems have been solved at the source and that our BI tool can read from dbt Semantic Layer (Metabase actually does not have an official connector). However, in the target modelling architecture, I suggest creating a layer for rolling-window type of aggregated tables. My poimt is that the path we chose, ultimately, depends on the business needs and other tools' limitations. 
+* `kraken_dbt_project` - a starter dbt project with a worked example of a thin slice (raids count metric). It assumes duplication problems have been solved at the source and that our BI tool can read from dbt Semantic Layer (Metabase actually does not have an official connector). It also assumes that aggregating data-on-the-fly is not costly. However, in the target modelling architecture, I suggest creating aggregated models and also a seperate layer for rolling-window type of aggregated tables. My point is that the path we chose, ultimately, depends on the business needs and other tools' limitations. 
 
 
 

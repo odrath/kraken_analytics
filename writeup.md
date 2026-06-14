@@ -91,15 +91,22 @@ This is a proposed modelling architecture, which may change depending on the dee
 
 ### Layers (diagram in dbt_modelling_layers_dependency.png):
 0.0. Sources - data in source tables synced directly into `raw` schema in the data warehouse
+
 0.1. MANUAL - data from seeds 
+
 0.2. UTILITIES - SQL-generated helper tables, such as dim_calendar and dim_calendar_hh, for easy timezone coversion of timestamps in BI tools. 
+
 1.0. STAGING - rename columns, cast types, apply source filters
 Naming convention is `(source_name)__dim_(model_name)` or `(source_name)__fact_(model_name)` 
+
 2.0 INTERMEDIATE (silver) - some business logic applied here, intermidiate models built for modularity and ease of debugging. Not exposed in the BI tool. 
 Naming convention `int_(dim/fact/agg)_(model name)`. 
+
 3.0 BI (gold) - core data assets exposed in the BI tool. Teams also use this layer to build their own data marts on top. 
 Naming convention `(dim/fact/agg)_(model name)`. 
+
 4.0 <if needed > BI_ROLLING - models with rolling window calculations for business users self-service in Metabase. All model names start with `agg_`.
+
 5.0. Team specific data marts, e.g. GROWTH_ANALYTICS, FINANCE_ANALYTICS etc
 
 There is also an official metrics layer (e.g. Snowflake Semantic View, dbt Semantic Layer, Metric in Metabase). 
