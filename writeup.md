@@ -6,7 +6,7 @@
 
 ## Executive summary
 > The current state of kraken analytics is a combination of a organisational issues and analytics engineering/best-practice issues. When planning the migration, the priority should be on restoring main reporting for the business, while not compromising on the reliability of the data.
-> Therefore, in first steps, we will start with a thin slice of a clean dbt project, that will feed a few main business metrics that the War Council is currently relying on (MVP). We will build them 
+> Therefore, in first steps, we will start with a thin slice of a clean dbt project, that will feed a few main business metrics that the War Council is currently relying on (MVP). We will build them using the new modelling architecture, which follows best practice and ensures data reliability. Once the MVP stage is completed, we will briefly focus on establishing future-proof analytics engineeering workflows. After that, we will continue building further models, based on the business pririotisation. 
 > 
 >
 >
@@ -104,7 +104,7 @@ There should be a system of what different tags represent:
 
 This is a proposed modelling architecture, which may change depending on the deeper analysis of the business needs. 
 
-Layers (diagram in dbt_modelling_layers_dependency.png):
+### Layers (diagram in dbt_modelling_layers_dependency.png):
 0.0. Sources - data in source tables synced directly into `raw` schema in the data warehouse
 0.1. MANUAL - data from seeds 
 0.2. UTILITIES - SQL-generated helper tables, such as dim_calendar and dim_calendar_hh, for easy timezone coversion of timestamps in BI tools. 
@@ -124,13 +124,20 @@ SQL Style guide written and shared with all dbt developers. I usually base mine 
 dbt workflow guide written and shared with all dbt developers. dbt pre-commit hooks implemented to enforce things like no hardcoded table paths, tests added to every model, columns documented etc 
 
 
-Ownership:
-Central
+### Ownership:
+Staging, intermediate and gold layers belong to central data team. The same applies to core business metrics derived from them. 
+
+Schema and metrics in the data mart layer, belong to business-embedded analysts (growth, finance, product etc).
 
 ##  Migration plan.
-1. Start with a thin slice of models following the target architecture and leading to the metrics: daily_active_captains, daily_raids, _daily_santioned_raids.  Define and document the business definition somewhere where everyone has access. Include full logic: timezone, aggregations/how the metric is sliced (e.g. per geo region), is there any window function applied etc
+1. Start with a thin slice of models following the target architecture and leading to the metrics: daily_active_captains, daily_raids, daily_santioned_raids.  Define and document the business definition somewhere where everyone has access. Include full logic: timezone, aggregations/how the metric is sliced (e.g. per geo region), is there any window function applied etc
 2. Build staging/intermediate/bi models leading to the fact_raids table. 
-3. Build 3 prioritised metrics in a data-team-controlled 
+3. Build 3 prioritised metrics, these will be conttrolled by the central data-team.
+4. Implement good practice rules for the future, which will ensure consistency in code and reliability of data:
+  - SQL linter
+  - pre-commit hooks
+  - documentation rules (e.g. all BI models need every column description)
+5. Continue building for the future. 
 
 
 ## Open questions
@@ -138,23 +145,3 @@ Central
 Are there created_at and updated_at fields in raw tables?Are there any sources worth snapshotting?
 Are there any models worth being incremental?
 Do we need any rolling windows models to mitigate seasonality?  Metabase's GUI currently cannot calculate window functions outside of a cumulative sum/count.
-
-## 
-
-### One worked example (optional but encouraged).
-
-** Pick one slice and show the
-   standard you'd hold the team to — e.g. a single conformed raid fact that
-   resolves the "how many sanctioned raids in May" disagreement, with tests. A
-   real `.sql` model in the project, or just the code in your write-up. You do
-   **not** need to refactor everything; one well-chosen example says more than
-   ten rushed ones.
-
-### What you'd do with more time, and the open questions** you'd take to Morgan.
-
-
-
-
-AI comments:
-
-suggested making python a source, I was able to deduct that it could be probably retired. 
